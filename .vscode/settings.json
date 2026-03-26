@@ -1,0 +1,17 @@
+{
+    "favorites.groups": [
+        "Default",
+        "1"
+    ],
+    "favorites.currentGroup": "1",
+    "favorites.resources": [
+        {
+            "filePath": "prompt_materials.md",
+            "group": "1"
+        },
+        {
+            "filePath": "planning.md",
+            "group": "1"
+        }
+    ]
+}

@@ -1,9 +1,21 @@
 {
-  "name": "spell",
+  "name": "quiz-app",
   "private": true,
   "scripts": {
+    "db:start": "bash scripts/db/start.sh",
+    "db:stop": "bash scripts/db/stop.sh",
+    "db:reset": "bash scripts/db/reset.sh",
+
+    "migration:generate": "pnpm -F api migration:generate",
+    "migration:create": "pnpm -F api migration:create",
+    "migration:run": "pnpm -F api migration:run",
+    "migration:revert": "pnpm -F api migration:revert",
+    "migration:show": "pnpm -F api migration:show",
+
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --parallel",
+    "dev:web": "turbo run dev --filter=./apps/web",
+    "dev:api": "turbo run dev --filter=./apps/api",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
