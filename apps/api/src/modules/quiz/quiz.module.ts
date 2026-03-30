@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Quiz, Question, QuizAttempt, AttemptAnswer } from '@spell/shared';
-import { QuizController } from './quiz.controller';
-import { QuizService } from './quiz.service';
-import { QuestionService } from './question.service';
-import { AttemptService } from './attempt.service';
+import { QuizController } from './quiz.controller.js';
+import { QuizService } from './quiz.service.js';
+import { QuestionService } from './question.service.js';
+import { AttemptService } from './attempt.service.js';
+import { AttemptController } from './attempt.controller.js';
+import { AnswerCheckerService } from './answer-checker.service.js';
 
 @Module({
   imports: [
@@ -15,8 +17,13 @@ import { AttemptService } from './attempt.service';
       AttemptAnswer,
     ]),
   ],
-  controllers: [QuizController],
-  providers: [QuizService, QuestionService, AttemptService],
+  controllers: [QuizController, AttemptController],
+  providers: [
+    QuizService, 
+    QuestionService, 
+    AttemptService, 
+    AnswerCheckerService
+  ],
   exports: [QuizService, QuestionService, AttemptService],
 })
 export class QuizModule {}

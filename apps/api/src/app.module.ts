@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Quiz, Question, QuizAttempt, AttemptAnswer } from '@spell/shared';
-import { QuizModule } from './modules/quiz/quiz.module';
-import { SharedModule } from './modules/shared/shared.module';
+import { QuizModule } from './modules/quiz/quiz.module.js';
+import { SharedModule } from './modules/shared/shared.module.js';
 
 @Module({
   imports: [

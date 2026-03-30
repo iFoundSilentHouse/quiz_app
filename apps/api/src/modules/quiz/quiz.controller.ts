@@ -1,13 +1,18 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
-import type { CreateQuizDto, QuizDto, QuizWithQuestionsDto } from '@spell/shared';
-import { QuizService } from './quiz.service';
+import type { CreateQuestionDto, CreateQuizDto, QuestionDto, QuizDto, QuizWithQuestionsDto } from '@spell/shared';
+import { QuizService } from './quiz.service.js';
+import { QuestionService } from './question.service.js';
 
 @Controller('quizzes')
 export class QuizController {
-  constructor(private readonly quizService: QuizService) {}
-
+  constructor(
+    private readonly quizService: QuizService,
+    private readonly questionService: QuestionService, // Внедряем сервис вопросов
+  ) {}
+  
   @Post()
   async create(@Body() createQuizDto: CreateQuizDto): Promise<QuizDto> {
+    console.log("createQuizDto: ", createQuizDto);
     return this.quizService.create(createQuizDto);
   }
 
@@ -32,5 +37,18 @@ export class QuizController {
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<void> {
     return this.quizService.remove(+id);
+  }
+
+  @Post(':id/questions')
+  async addQuestion(
+    @Param('id') id: string,
+    @Body() dto: CreateQuestionDto,
+  ): Promise<QuestionDto> {
+    return this.questionService.create(+id, dto);
+  }
+
+  @Get(':id/questions')
+  async getQuestions(@Param('id') id: string): Promise<QuestionDto[]> {
+    return this.questionService.findByQuizId(+id);
   }
 }
