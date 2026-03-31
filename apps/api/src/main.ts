@@ -10,8 +10,10 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
   }));
   app.enableCors({
-    origin: [`http://localhost:${process.env.PORT}`, `http://127.0.0.1:${process.env.PORT}`],
+    // TODO: изменить захардкоженное next приложение
+    origin: [`http://localhost:${process.env.FRONTEND_PORT}`, `http://127.0.0.1:${process.env.FRONTEND_PORT}`],
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
   });
   await app.listen(process.env.PORT ?? 3011);
 }

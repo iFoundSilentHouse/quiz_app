@@ -7,6 +7,7 @@ import { QuestionService } from './question.service.js';
 import { AttemptService } from './attempt.service.js';
 import { AttemptController } from './attempt.controller.js';
 import { AnswerCheckerService } from './answer-checker.service.js';
+import { QuestionController } from './question.controller.js';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { AnswerCheckerService } from './answer-checker.service.js';
       AttemptAnswer,
     ]),
   ],
-  controllers: [QuizController, AttemptController],
+  controllers: [QuizController, QuestionController, AttemptController],
   providers: [
     QuizService, 
     QuestionService, 
