@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
-import type { CreateQuestionDto, CreateQuizDto, QuestionDto, QuizDto, QuizWithQuestionsDto } from '@spell/shared';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe } from '@nestjs/common';
+import type { CreateAttemptDto, CreateQuestionDto, CreateQuizDto, QuestionDto, QuizDto, QuizWithQuestionsDto } from '@spell/shared';
 import { QuizService } from './quiz.service.js';
 import { QuestionService } from './question.service.js';
+import { AttemptService } from './attempt.service.js';
 
 @Controller('quizzes')
 export class QuizController {
   constructor(
     private readonly quizService: QuizService,
     private readonly questionService: QuestionService, // Внедряем сервис вопросов
+    private readonly attemptService: AttemptService, 
   ) {}
   
   @Post()
@@ -50,5 +52,14 @@ export class QuizController {
   @Get(':id/questions')
   async getQuestions(@Param('id') id: string): Promise<QuestionDto[]> {
     return this.questionService.findByQuizId(+id);
+  }
+
+  @Post(':id/attempts')
+  async submitAttempt(
+    @Param('id', ParseIntPipe) quizId: number, 
+    @Body() dto: CreateAttemptDto
+  ) {
+    // Теперь путь будет POST /quizzes/2/attempts
+    return this.attemptService.create(quizId, dto);
   }
 }

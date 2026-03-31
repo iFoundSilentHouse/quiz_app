@@ -5,8 +5,9 @@
 
 export interface AnswerResultDto {
   questionId: number;
+  imageUrl: string;      // Не забудьте добавить это, если еще не сделали
   given: string;
-  correct: string;
+  correctAnswer: string; // Переименовываем 'correct' -> 'correctAnswer'
   isCorrect: boolean;
   diff: DiffCharDto[];
 }

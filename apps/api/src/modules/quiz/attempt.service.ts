@@ -1,3 +1,4 @@
+// TODO
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,7 +20,7 @@ export class AttemptService {
     private answerRepository: Repository<AttemptAnswer>,
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
-  ) {}
+  ) { }
 
   async create(quizId: number, createAttemptDto: CreateAttemptDto): Promise<AttemptWithResultsDto> {
     // Получаем все вопросы теста
@@ -37,7 +38,10 @@ export class AttemptService {
     const answers: AttemptAnswer[] = [];
 
     for (const question of questions) {
+      // КОРРЕКТНЫЙ ДОСТУП ДЛЯ Record<number, string>
+      // Мы просто обращаемся к объекту по ID вопроса как по ключу
       const givenAnswer = createAttemptDto.answers[question.id] || '';
+
       const isCorrect = this.compareAnswers(givenAnswer, question.correctAnswer);
       const diff = this.calculateDiff(givenAnswer, question.correctAnswer);
 
@@ -114,46 +118,29 @@ export class AttemptService {
    * Вычисление посимвольного различия
    */
   private calculateDiff(given: string, correct: string): DiffCharDto[] {
-    const givenNorm = given.toLowerCase().trim();
-    const correctNorm = correct.toLowerCase().trim();
+    const givenChars = given.split('');
+    const correctChars = correct.split('');
     const diff: DiffCharDto[] = [];
 
-    // Используем алгоритм Левенштейна для более точного сравнения
-    const maxLen = Math.max(givenNorm.length, correctNorm.length);
+    // Итерируемся именно по тому, что ВВЕЛ ученик
+    for (let i = 0; i < givenChars.length; i++) {
+      const char = givenChars[i];
+      const expected = correctChars[i];
 
-    for (let i = 0; i < maxLen; i++) {
-      const givenChar = givenNorm[i];
-      const correctChar = correctNorm[i];
-
-      if (givenChar === correctChar) {
-        diff.push({
-          char: correctChar || '',
-          type: 'correct',
-          index: i,
-        });
-      } else if (givenChar === undefined) {
-        // Пропущен символ
-        diff.push({
-          char: correctChar,
-          type: 'missing',
-          index: i,
-        });
-      } else if (correctChar === undefined) {
-        // Лишний символ
-        diff.push({
-          char: givenChar,
-          type: 'extra',
-          index: i,
-        });
+      if (char.toLowerCase() === expected?.toLowerCase()) {
+        diff.push({ char, type: 'correct', index: i });
+      } else if (expected === undefined) {
+        // Ученик ввел больше букв, чем в слове
+        diff.push({ char, type: 'extra', index: i });
       } else {
-        // Неправильный символ
-        diff.push({
-          char: correctChar,
-          type: 'incorrect',
-          index: i,
-        });
+        // Буква на этом месте просто неверная
+        diff.push({ char, type: 'incorrect', index: i });
       }
     }
+
+    // Опционально: если хочешь передавать информацию о пропущенных буквах
+    // для другого компонента, можно добавить их в конец, но для "Ваш ответ" 
+    // мы их просто проигнорируем на фронте.
 
     return diff;
   }
@@ -175,10 +162,15 @@ export class AttemptService {
   ): AttemptWithResultsDto {
     const results: AnswerResultDto[] = attempt.answers.map((answer) => {
       const question = questions.find((q) => q.id === answer.questionId);
+
       return {
         questionId: answer.questionId,
         given: answer.givenAnswer,
-        correct: question?.correctAnswer || '',
+        // ОШИБКА БЫЛА ЗДЕСЬ: 
+        // 1. Заменяем ключ "correct" на "correctAnswer"
+        correctAnswer: question?.correctAnswer || '',
+        // 2. Добавляем недостающее поле "imageUrl"
+        imageUrl: question?.imageUrl || '',
         isCorrect: answer.isCorrect,
         diff: answer.diff || [],
       };
