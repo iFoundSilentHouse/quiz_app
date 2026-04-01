@@ -23,8 +23,8 @@ import { UploadModule } from './modules/upload/upload.module.js';
         type: 'postgres',
         host: configService.get('DB_HOST', 'localhost'),
         port: configService.get('DB_PORT', 5432),
-        username: configService.get('DB_USERNAME', 'indigo'),
-        password: configService.get('DB_PASSWORD', 'somedayiwill'),
+        username: configService.get('DB_USERNAME', 'indigo_user'),
+        password: configService.get('DB_PASSWORD', 'secure_pass'),
         database: configService.get('DB_DATABASE', 'quiz_app'),
         schema: 'spell_quiz',
         

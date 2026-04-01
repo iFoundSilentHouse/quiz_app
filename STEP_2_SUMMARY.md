@@ -74,22 +74,6 @@ class AttemptAnswer {
 - `apps/api/typeorm.config.ts` — конфигурация DataSource
 - `apps/api/src/app.module.ts` — подключение TypeOrmModule
 
-**Конфигурация:**
-```typescript
-TypeOrmModule.forRootAsync({
-  type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'indigo',
-  password: 'somedayiwill',
-  database: 'quiz',
-  schema: 'shared',
-  entities: [Quiz, Question, QuizAttempt, AttemptAnswer],
-  synchronize: false,
-  logging: true (в development),
-})
-```
-
 ### 3. Создание первой миграции
 
 **Файл:** `apps/api/src/migrations/1705315200000-InitialSchema.ts`
@@ -170,16 +154,6 @@ Diff:       [
 ### 7. Обновлена конфигурация
 
 **`.env`** (для API):
-```
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=indigo
-DB_PASSWORD=somedayiwill
-DB_DATABASE=quiz
-NODE_ENV=development
-PORT=3000
-TYPEORM_LOGGING=true
-```
 
 **`packages/shared/tsconfig.json`:**
 - Добавлены флаги для TypeORM:

@@ -2,6 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe.js';
 
+const origins = [
+  'http://localhost:3010',
+  'http://127.0.0.1:3010',
+];
+
+if (process.env.FRONTEND_URL) {
+  origins.push(process.env.FRONTEND_URL);
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({
@@ -10,10 +19,9 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
   }));
   app.enableCors({
-    // TODO: изменить захардкоженное next приложение
-    origin: [`http://localhost:${process.env.FRONTEND_PORT}`, `http://127.0.0.1:${process.env.FRONTEND_PORT}`],
+    origin: origins,
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
   await app.listen(process.env.PORT ?? 3011);
 }

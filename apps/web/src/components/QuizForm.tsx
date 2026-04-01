@@ -17,6 +17,7 @@ interface QuestionState {
 }
 
 export function QuizForm({ quizId, initialData }: QuizFormProps) {
+	const isEditMode = !!quizId; // Проверяем, редактируем ли мы или создаем
 	const router = useRouter();
 	const [title, setTitle] = useState(initialData?.title || '');
 	const [description, setDescription] = useState(initialData?.description || '');
@@ -59,34 +60,34 @@ export function QuizForm({ quizId, initialData }: QuizFormProps) {
 			let currentQuizId = quizId;
 
 			// 1. Создаем или обновляем тест
-			if (quizId) {
+			if (isEditMode) {
 				await api.put(`/quizzes/${quizId}`, { title, description });
 			} else {
 				const newQuiz = await api.post('/quizzes', { title, description });
 				currentQuizId = newQuiz.id;
 			}
 
-			// 2. Обрабатываем вопросы
-			// Используем entries(), чтобы получить и индекс (i), и сам объект (q)
-			for (const [i, q] of questions.entries()) {
-				// Теперь TS знает, что q существует. 
-				// Но на всякий случай добавим проверку, если в массиве есть "дыры"
-				if (!q) continue;
-
-				const payload = { ...q, order: i + 1 };
+			// 2. Обрабатываем вопросы ПАРАЛЛЕЛЬНО (быстрее)
+			const questionPromises = questions.map((q, i) => {
+				const payload = {
+					imageUrl: q.imageUrl,
+					correctAnswer: q.correctAnswer,
+					order: i + 1,
+					quizId: currentQuizId // Привязка к квизу
+				};
 
 				if (q.id) {
-					// Если ID есть — обновляем
-					await api.put(`/questions/${q.id}`, payload);
+					return api.put(`/questions/${q.id}`, payload);
 				} else {
-					// Если ID нет — создаем новый. 
-					// currentQuizId точно будет определен после Шага 1
-					await api.post(`/quizzes/${currentQuizId}/questions`, payload);
+					return api.post(`/quizzes/${currentQuizId}/questions`, payload);
 				}
-			}
+			});
 
+			await Promise.all(questionPromises);
+
+			alert(isEditMode ? 'Тест обновлен' : 'Тест создан');
 			router.push('/dashboard');
-			router.refresh(); // Чтобы обновить данные в серверных компонентах
+			router.refresh();
 		} catch (error) {
 			console.error(error);
 			alert('Ошибка при сохранении');

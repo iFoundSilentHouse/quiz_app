@@ -11,7 +11,7 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
   exit 1
 fi
 
-COMPOSE_FILE="docker/compose/docker-compose.yml"
+COMPOSE_FILE="docker/compose/docker-compose.dev.yml"
 POSTGRES_CONTAINER="${POSTGRES_DB}-postgres"
 
 echo "🛑 Stopping all services..."

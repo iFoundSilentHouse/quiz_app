@@ -15,8 +15,8 @@ export default new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
-  username: process.env.DB_USERNAME || 'indigo',
-  password: process.env.DB_PASSWORD || 'somedayiwill',
+  username: process.env.DB_USERNAME || 'indigo_user',
+  password: process.env.DB_PASSWORD || 'secure_pass',
   database: process.env.DB_DATABASE || 'quiz_app',
   schema: 'spell_quiz',
 

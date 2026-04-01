@@ -12,7 +12,7 @@ fi
 echo "🛑 Stopping PostgreSQL container..."
 
 # Остановка контейнера (без удаления)
-docker-compose -f docker/compose/docker-compose.yml stop postgres
+docker-compose -f docker/compose/docker-compose.dev.yml stop postgres
 
 # Проверка статуса
 if [ $? -eq 0 ]; then
@@ -28,4 +28,4 @@ fi
 # Показать статус всех контейнеров
 echo ""
 echo "📊 Current container status:"
-docker-compose -f docker/compose/docker-compose.yml ps
+docker-compose -f docker/compose/docker-compose.dev.yml ps

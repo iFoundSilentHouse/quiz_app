@@ -142,13 +142,12 @@ chmod +x test-migrations.sh
 Убедитесь, что в `.env` установлены:
 
 ```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=indigo
-DB_PASSWORD=somedayiwill
-DB_DATABASE=quiz_app
-NODE_ENV=development
-PORT=3011
+DB_HOST
+DB_PORT
+DB_USERNAME
+DB_PASSWORD
+DB_DATABASE
+PORT
 ```
 
 ## ⚠️ Частые проблемы и решения

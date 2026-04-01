@@ -13,7 +13,7 @@ export function QuestionCard({ index, question, updateQuestion, removeQuestion }
   return (
     <div className="p-4 bg-white border rounded-xl shadow-sm space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="font-semibold text-gray-700">Вопрос #{index + 1}</h3>
+        <h3 className="font-semibold text-gray-700">Вопрос {index + 1}</h3>
         <button onClick={() => removeQuestion(index)} className="text-red-500 hover:text-red-700 text-sm font-medium">
           Удалить
         </button>

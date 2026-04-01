@@ -13,7 +13,7 @@ if [ ! -f docker/compose/.env ]; then
 fi
 
 # Запуск контейнера
-docker-compose -f docker/compose/docker-compose.yml up -d postgres
+docker-compose -f docker/compose/docker-compose.dev.yml up -d postgres
 
 # Ожидание готовности PostgreSQL
 echo "⏳ Waiting for PostgreSQL to be ready..."
