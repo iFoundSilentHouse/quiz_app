@@ -33,6 +33,10 @@ No need to configure .env files. Just add your external (or local) IP with :3011
 
 and frontend will be able at localhost:3010. backend at localhost:3011.
 
+
+Rebuild only api if you need to forgot to add variables at docker/compose/.env.production 
+`docker compose -f docker/compose/docker-compose.prod.yml --env-file docker/compose/.env.production up -d --build api`
+
 ## Technologies used
 * Monorepo organized project
 * Next js

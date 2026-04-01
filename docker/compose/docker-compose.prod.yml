@@ -33,11 +33,15 @@ services:
       PORT: ${PORT}
       NODE_ENV: production
       FRONTEND_URL: ${FRONTEND_URL}
+      # Ссылка на сам api (на момент первого деплоя ради корректных ссылок на картинки в сервисе загрузок картинок)
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     ports:
       - "${PORT}:${PORT}"
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+    - ../../uploads:/app/uploads
     networks:
       - monorepo-network
     restart: always
