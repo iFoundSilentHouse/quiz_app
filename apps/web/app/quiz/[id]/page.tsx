@@ -16,7 +16,7 @@ export default function QuizPassagePage() {
   }, [id]);
 
   const handleSubmit = async () => {
-    if (!studentName.trim()) return alert('Введите ваше имя');
+    if (!studentName.trim()) return alert('Enter your name:');
 
     try {
       const response = await api.post(`/quizzes/${id}/attempts`, {
@@ -25,11 +25,11 @@ export default function QuizPassagePage() {
       });
       router.push(`/quiz/${id}/result?attemptId=${response.id}`);
     } catch (e) {
-      alert('Ошибка при сохранении результата');
+      alert('Error when saving a result');
     }
   };
 
-  if (!quiz) return <div className="p-8">Загрузка...</div>;
+  if (!quiz) return <div className="p-8">Loading...</div>;
 
   return (
     <main className="max-w-4xl mx-auto p-6 space-y-8">
@@ -37,7 +37,7 @@ export default function QuizPassagePage() {
         <h1 className="text-2xl font-bold mb-4">{quiz.title}</h1>
         <input
           type="text"
-          placeholder="Ваше имя"
+          placeholder="Your name"
           className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           value={studentName}
           onChange={(e) => setStudentName(e.target.value)}
@@ -47,11 +47,11 @@ export default function QuizPassagePage() {
       <div className="flex flex-col gap-4">
         {quiz.questions.map((q, index) => (
           <div key={q.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4 ">
-            <span className="text-2xl font-bold text-gray-900">Вопрос {index + 1}:</span>
+            <span className="text-2xl font-bold text-gray-900">Question {index + 1}:</span>
             <img src={q.imageUrl} alt="Вопрос" className="mx-auto object-cover rounded-lg" />
             <input
               type="text"
-              placeholder="Что здесь нарисовано?"
+              placeholder="What is shown here?"
               className="w-full p-2 border-b-2 border-gray-200 focus:border-blue-500 outline-none text-center text-xl uppercase tracking-widest"
               value={answers[q.id!] || ''}
               onChange={(e) => setAnswers({ ...answers, [q.id!]: e.target.value })}
@@ -64,7 +64,7 @@ export default function QuizPassagePage() {
         onClick={handleSubmit}
         className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg"
       >
-        Завершить и проверить
+        Finish and check
       </button>
     </main>
   );

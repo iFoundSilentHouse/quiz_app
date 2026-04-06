@@ -1,0 +1,1 @@
+In alpha version student's ui is dont in english-only as it's english words spell test

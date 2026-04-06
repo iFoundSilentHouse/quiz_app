@@ -1,6 +1,6 @@
 ## Initial setup
 ### For dev env
-.env files are necessary on path:
+#### .env files are necessary on path:
 
 
 `apps/web/.env`. Variables:
@@ -24,6 +24,11 @@
 - POSTGRES_DB `for db and container naming`
 - POSTGRES_PORT
 
+#### Setup and migrate db
+1) `pnpm run db:start`
+2) `cd apps/api`
+
+`pnpm migration:run`
 
 ## Deploy
 No need to configure .env files. Just add your external (or local) IP with :3011 at docker/compose/.env.production NEXT_PUBLIC_API_URL variable.
