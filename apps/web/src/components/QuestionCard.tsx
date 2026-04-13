@@ -1,5 +1,6 @@
 'use client';
 
+import { ClipboardHandler } from './ClipboardHandler';
 import { ImageUploader } from './ImageUploader';
 
 interface QuestionProps {
@@ -14,14 +15,30 @@ export function QuestionCard({ index, question, updateQuestion, removeQuestion }
     <div className="p-4 bg-white border rounded-xl shadow-sm space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="font-semibold text-gray-700">Вопрос {index + 1}</h3>
-        <button onClick={() => removeQuestion(index)} className="text-red-500 hover:text-red-700 text-sm font-medium">
+        <button type="button" onClick={() => removeQuestion(index)} className="text-red-500 hover:text-red-700 text-sm font-medium">
           Удалить
         </button>
       </div>
-      
-      <ImageUploader 
-        value={question.imageUrl} 
-        onChange={(url) => updateQuestion(index, 'imageUrl', url)} 
+
+      <ClipboardHandler
+        onImagePasted={(file) => {
+          console.log('Поймали файл:', file.name);
+          // Тут логика загрузки файла на сервер или создания Preview URL
+          const previewUrl = URL.createObjectURL(file);
+          updateQuestion(index, 'imageUrl', previewUrl);
+        }}
+      >
+        <div className="border-2 border-dashed p-4 rounded-lg text-center">
+          {question.imageUrl ? (
+            <img src={question.imageUrl} alt="Превью" className="max-h-32 mx-auto" />
+          ) : (
+            <p className="text-gray-400">Вставьте скопированную картинку</p>
+          )}
+        </div>
+      </ClipboardHandler>
+      <ImageUploader
+        value={question.imageUrl}
+        onChange={(url) => updateQuestion(index, 'imageUrl', url)}
       />
 
       <div>

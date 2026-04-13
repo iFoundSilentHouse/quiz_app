@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import type { CreateQuestionDto, QuestionDto } from '@spell/shared';
-import { Question, Quiz } from '@spell/shared';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import type { CreateQuestionDto, QuestionDto } from "@spell/shared";
+import { Question, Quiz } from "@spell/shared";
 
 @Injectable()
 export class QuestionService {
@@ -13,7 +13,10 @@ export class QuestionService {
     private quizRepository: Repository<Quiz>,
   ) {}
 
-  async create(quizId: number, createQuestionDto: CreateQuestionDto): Promise<QuestionDto> {
+  async create(
+    quizId: number,
+    createQuestionDto: CreateQuestionDto,
+  ): Promise<QuestionDto> {
     // Проверяем, существует ли тест
     const quiz = await this.quizRepository.findOne({ where: { id: quizId } });
     if (!quiz) {
@@ -32,7 +35,7 @@ export class QuestionService {
   async findByQuizId(quizId: number): Promise<QuestionDto[]> {
     const questions = await this.questionRepository.find({
       where: { quizId },
-      order: { order: 'ASC' },
+      order: { order: "ASC" },
     });
     return questions.map((q) => this.mapToQuestionDto(q));
   }
@@ -47,7 +50,10 @@ export class QuestionService {
     return this.mapToQuestionDto(question);
   }
 
-  async update(id: number, updateQuestionDto: Partial<CreateQuestionDto>): Promise<QuestionDto> {
+  async update(
+    id: number,
+    updateQuestionDto: Partial<CreateQuestionDto>,
+  ): Promise<QuestionDto> {
     const question = await this.questionRepository.findOne({ where: { id } });
 
     if (!question) {

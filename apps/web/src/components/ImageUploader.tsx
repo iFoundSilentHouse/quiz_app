@@ -28,7 +28,12 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 relative overflow-hidden">
+    <div className="group flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 relative overflow-hidden">
+      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="text-[10px] bg-gray-100 px-2 py-1 rounded border text-gray-500">
+          Загрузить из файлов
+        </span>
+      </div>
       {value ? (
         <img src={value} alt="Preview" className="object-contain w-full h-full" />
       ) : (

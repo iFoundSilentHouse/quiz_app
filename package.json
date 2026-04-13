@@ -5,25 +5,32 @@
     "db:start": "bash scripts/db/start.sh",
     "db:stop": "bash scripts/db/stop.sh",
     "db:reset": "bash scripts/db/reset.sh",
-
     "migration:generate": "pnpm -F api migration:generate",
     "migration:create": "pnpm -F api migration:create",
     "migration:run": "pnpm -F api migration:run",
     "migration:revert": "pnpm -F api migration:revert",
     "migration:show": "pnpm -F api migration:show",
-
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "dev:web": "turbo run dev --filter=./apps/web",
     "dev:api": "turbo run dev --filter=./apps/api",
     "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:coverage": "vitest run --coverage",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "4.1.4",
+    "jsdom": "^29.0.2",
     "prettier": "^3.7.4",
     "turbo": "^2.8.20",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitest": "^4.1.4"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {

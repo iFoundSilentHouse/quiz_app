@@ -20,6 +20,21 @@
     "start": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "test": {
+      // Зависит от билда соседних пакетов в воркспейсе (например, @spell/shared)
+      "dependsOn": ["^build"], 
+      // Какие файлы влияют на результат теста
+      "inputs": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "app/**/*.tsx",
+        "test/**/*.ts",
+        "vitest.config.ts",
+        "vitest.setup.ts"
+      ],
+      // Если ты генерируешь отчеты о покрытии (coverage)
+      "outputs": ["coverage/**"]
     }
   }
 }

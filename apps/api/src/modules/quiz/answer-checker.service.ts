@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import type { DiffCharDto } from '@spell/shared';
+import { Injectable } from "@nestjs/common";
+import type { DiffCharDto } from "@spell/shared";
 
 @Injectable()
 export class AnswerCheckerService {
@@ -24,13 +24,13 @@ export class AnswerCheckerService {
       const correctChar = correctNorm[i];
 
       if (givenChar === correctChar) {
-        diff.push({ char: correctChar || '', type: 'correct', index: i });
+        diff.push({ char: correctChar || "", type: "correct", index: i });
       } else if (givenChar === undefined) {
-        diff.push({ char: correctChar, type: 'missing', index: i });
+        diff.push({ char: correctChar, type: "missing", index: i });
       } else if (correctChar === undefined) {
-        diff.push({ char: givenChar, type: 'extra', index: i });
+        diff.push({ char: givenChar, type: "extra", index: i });
       } else {
-        diff.push({ char: correctChar, type: 'incorrect', index: i });
+        diff.push({ char: correctChar, type: "incorrect", index: i });
       }
     }
     return diff;

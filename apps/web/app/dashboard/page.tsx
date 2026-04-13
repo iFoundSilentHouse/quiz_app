@@ -1,14 +1,16 @@
 import Link from 'next/link';
 import CopyLinkButton from '@/components/CopyLinkButton'; // Проверь путь к компоненту
+import { Suspense } from 'react';
+import SuccessToast from '@/components/SuccessToast';
 
 // Серверный компонент в Next.js App Router (fetch выполняется на сервере)
 async function getQuizzes() {
   try {
     // Используем 127.0.0.1 вместо localhost
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3011';
-    
-    const res = await fetch(`${baseUrl}/quizzes`, { 
-      cache: 'no-store' 
+
+    const res = await fetch(`${baseUrl}/quizzes`, {
+      cache: 'no-store'
     });
 
     if (!res.ok) {
@@ -25,14 +27,20 @@ async function getQuizzes() {
 }
 
 export default async function DashboardPage() {
+
   const quizzes = await getQuizzes();
 
   return (
     <main className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
+        {/* Оборачиваем в Suspense, так как SuccessToast использует useSearchParams */}
+        <Suspense>
+          <SuccessToast />
+        </Suspense>
+        
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Мои тесты</h1>
-          <Link href="/quizzes/new" className="bg-blue-600 !text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 ">
+          <Link href="/edit-quiz/new" className="bg-blue-600 !text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 ">
             Создать тест
           </Link>
         </div>
@@ -49,7 +57,7 @@ export default async function DashboardPage() {
                 {/* Кнопка копирования */}
                 <CopyLinkButton quizId={quiz.id} />
                 <div className="mt-4 flex gap-2">
-                  <Link href={`/quizzes/${quiz.id}/edit`} className="text-blue-600 text-sm font-medium hover:underline">
+                  <Link href={`/edit-quiz/${quiz.id}/edit`} className="text-blue-600 text-sm font-medium hover:underline">
                     Редактировать
                   </Link>
                 </div>

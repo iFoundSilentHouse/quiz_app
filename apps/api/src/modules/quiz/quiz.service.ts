@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import type { CreateQuizDto, QuizDto, QuizWithQuestionsDto } from '@spell/shared';
-import { Quiz } from '@spell/shared';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import type {
+  CreateQuizDto,
+  QuizDto,
+  QuizWithQuestionsDto,
+} from "@spell/shared";
+import { Quiz } from "@spell/shared";
 
 @Injectable()
 export class QuizService {
@@ -19,7 +23,7 @@ export class QuizService {
 
   async findAll(): Promise<QuizDto[]> {
     const quizzes = await this.quizRepository.find({
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
     return quizzes.map((quiz) => this.mapToQuizDto(quiz));
   }
@@ -27,8 +31,8 @@ export class QuizService {
   async findOne(id: number): Promise<QuizWithQuestionsDto> {
     const quiz = await this.quizRepository.findOne({
       where: { id },
-      relations: ['questions'],
-      order: { questions: { order: 'ASC' } },
+      relations: ["questions"],
+      order: { questions: { order: "ASC" } },
     });
 
     if (!quiz) {

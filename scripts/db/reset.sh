@@ -37,6 +37,8 @@ until docker-compose -f "$COMPOSE_FILE" exec postgres pg_isready -U "$POSTGRES_U
   sleep 1
 done
 
+sleep 3 # init.sql is proceed
+
 echo "✅ PostgreSQL is ready"
 echo ""
 
@@ -52,7 +54,7 @@ fi
 
 cd apps/api
 
-echo "🚀 Running Prisma migrations..."
+echo "🚀 Running TypeORM migrations..."
 pnpm run migration:run
 
 echo "✅ Migrations applied successfully!"

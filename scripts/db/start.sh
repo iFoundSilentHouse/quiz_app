@@ -17,7 +17,8 @@ docker-compose -f docker/compose/docker-compose.dev.yml up -d postgres
 
 # Ожидание готовности PostgreSQL
 echo "⏳ Waiting for PostgreSQL to be ready..."
-until docker exec "${POSTGRES_DB}-postgres" pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} > /dev/null 2>&1; do
+until docker-compose -f docker/compose/docker-compose.dev.yml exec -T postgres pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} > /dev/null 2>&1; do
+  echo "Still waiting..." # добавим лог, чтобы видеть прогресс
   sleep 1
 done
 

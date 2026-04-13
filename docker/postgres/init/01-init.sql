@@ -1,43 +1,26 @@
--- 0. Удаление дефолтной public схемы
-DROP SCHEMA IF EXISTS public CASCADE;
+-- 1. НЕ удаляем public. 
+-- TypeORM и многие расширения по умолчанию ищут её. Лучше оставить.
+-- DROP SCHEMA IF EXISTS public CASCADE; 
 
--- 1. Создание роли (перенесено в начало)
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'quiz_app') THEN
-        CREATE ROLE quiz_app WITH LOGIN PASSWORD 'quiz_password';
-    END IF;
-END
-$$;
-
--- 2. Создание схем
-CREATE SCHEMA IF NOT EXISTS shared;
+-- 2. Создаем схему spell_quiz, если её нет
 CREATE SCHEMA IF NOT EXISTS spell_quiz;
 
-ALTER SCHEMA shared OWNER TO quiz_app;
-ALTER SCHEMA spell_quiz OWNER TO quiz_app;
+-- 3. В Docker-образе Postgres юзер из POSTGRES_USER создается автоматически.
+-- Мы просто даем ему права на нашу новую схему.
 
--- !!! ВАЖНЫЙ ДОБАВЛЕННЫЙ ШАГ !!!
--- Устанавливаем путь для ТЕКУЩЕЙ сессии, чтобы расширения знали, где создаваться
-SET search_path TO spell_quiz, shared;
+GRANT ALL PRIVILEGES ON SCHEMA spell_quiz TO ${POSTGRES_USER:-indigo};
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA spell_quiz TO ${POSTGRES_USER:-indigo};
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA spell_quiz TO ${POSTGRES_USER:-indigo};
 
--- 3. Создание расширений (теперь они создадутся в spell_quiz)
+-- 4. Устанавливаем search_path, чтобы таблицы создавались в spell_quiz по умолчанию,
+-- но public оставалась в доступе для системных таблиц.
+ALTER DATABASE ${POSTGRES_DB:-quiz_app} SET search_path TO spell_quiz, public;
+
+-- 5. Расширения (теперь создадутся в текущем search_path, т.е. в spell_quiz)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- 4. Настройка прав пользователю quiz_app
-GRANT USAGE ON SCHEMA shared TO quiz_app;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA shared TO quiz_app;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA shared TO quiz_app;
-GRANT USAGE ON SCHEMA spell_quiz TO quiz_app;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA spell_quiz TO quiz_app;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA spell_quiz TO quiz_app;
-
--- 5. Установка search_path на уровне базы данных (для будущих подключений)
-ALTER DATABASE quiz_app SET search_path TO spell_quiz, shared;
-
--- 6. Уведомление
 DO $$
 BEGIN
-    RAISE NOTICE '✅ Database initialization completed';
+    RAISE NOTICE '✅ Database dev-initialization completed';
 END $$;

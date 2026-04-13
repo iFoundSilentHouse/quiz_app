@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { QuestionCard } from './QuestionCard';
@@ -12,6 +12,7 @@ interface QuizFormProps {
 
 interface QuestionState {
 	id?: number;
+	tempId?: string;
 	imageUrl?: string;
 	correctAnswer?: string;
 }
@@ -21,14 +22,15 @@ export function QuizForm({ quizId, initialData }: QuizFormProps) {
 	const router = useRouter();
 	const [title, setTitle] = useState(initialData?.title || '');
 	const [description, setDescription] = useState(initialData?.description || '');
-	// Вопросы теперь могут иметь ID из базы
 	const [questions, setQuestions] = useState<QuestionState[]>(
-		initialData?.questions || [{ imageUrl: '', correctAnswer: '' }]
+		initialData?.questions || [{ imageUrl: '', correctAnswer: '', tempId: crypto.randomUUID() }]
 	);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const addQuestion = () => setQuestions([...questions, { imageUrl: '', correctAnswer: '' }]);
-
+	const addQuestion = () => setQuestions([
+		...questions,
+		{ imageUrl: '', correctAnswer: '', tempId: crypto.randomUUID() }
+	]);
 	const updateQuestion = (index: number, field: string, value: string) => {
 		const newQuestions = [...questions];
 		newQuestions[index] = { ...newQuestions[index], [field]: value };
@@ -68,25 +70,26 @@ export function QuizForm({ quizId, initialData }: QuizFormProps) {
 			}
 
 			// 2. Обрабатываем вопросы ПАРАЛЛЕЛЬНО (быстрее)
-			const questionPromises = questions.map((q, i) => {
+			const questionPromises = questions.map(async (q, i) => {
 				const payload = {
 					imageUrl: q.imageUrl,
 					correctAnswer: q.correctAnswer,
 					order: i + 1,
-					quizId: currentQuizId // Привязка к квизу
+					quizId: currentQuizId
 				};
 
-				if (q.id) {
+				// Если это РЕЖИМ РЕДАКТИРОВАНИЯ и у вопроса есть ID из базы — обновляем
+				if (isEditMode && q.id) {
 					return api.put(`/questions/${q.id}`, payload);
-				} else {
-					return api.post(`/quizzes/${currentQuizId}/questions`, payload);
 				}
-			});
 
+				// Во всех остальных случаях (новый тест или новый вопрос в старом тесте) — создаем
+				return api.post(`/quizzes/${currentQuizId}/questions`, payload);
+			});
 			await Promise.all(questionPromises);
 
-			alert(isEditMode ? 'Тест обновлен' : 'Тест создан');
-			router.push('/dashboard');
+			const message = isEditMode ? 'Тест обновлен' : 'Тест создан';
+			router.push(`/dashboard?success=${encodeURIComponent(message)}`);
 			router.refresh();
 		} catch (error) {
 			console.error(error);
@@ -107,7 +110,7 @@ export function QuizForm({ quizId, initialData }: QuizFormProps) {
 			<div className="space-y-4">
 				<h2 className="text-xl font-bold">Вопросы</h2>
 				{questions.map((q: any, i: number) => (
-					<QuestionCard key={q.id || i} index={i} question={q} updateQuestion={updateQuestion} removeQuestion={removeQuestion} />
+					<QuestionCard key={q.id ?? q.tempId} index={i} question={q} updateQuestion={updateQuestion} removeQuestion={removeQuestion} />
 				))}
 				<button type="button" onClick={addQuestion} className="w-full py-3 border-2 border-dashed border-blue-400 text-blue-600 rounded-xl hover:bg-blue-50">
 					+ Добавить вопрос

@@ -1,15 +1,14 @@
-// TODO
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 import type {
   CreateAttemptDto,
   AttemptDto,
   AttemptWithResultsDto,
   AnswerResultDto,
   DiffCharDto,
-} from '@spell/shared';
-import { QuizAttempt, AttemptAnswer, Question } from '@spell/shared';
+} from "@spell/shared";
+import { QuizAttempt, AttemptAnswer, Question } from "@spell/shared";
 
 @Injectable()
 export class AttemptService {
@@ -20,13 +19,16 @@ export class AttemptService {
     private answerRepository: Repository<AttemptAnswer>,
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
-  ) { }
+  ) {}
 
-  async create(quizId: number, createAttemptDto: CreateAttemptDto): Promise<AttemptWithResultsDto> {
+  async create(
+    quizId: number,
+    createAttemptDto: CreateAttemptDto,
+  ): Promise<AttemptWithResultsDto> {
     // Получаем все вопросы теста
     const questions = await this.questionRepository.find({
       where: { quizId },
-      order: { order: 'ASC' },
+      order: { order: "ASC" },
     });
 
     if (!questions.length) {
@@ -40,9 +42,12 @@ export class AttemptService {
     for (const question of questions) {
       // КОРРЕКТНЫЙ ДОСТУП ДЛЯ Record<number, string>
       // Мы просто обращаемся к объекту по ID вопроса как по ключу
-      const givenAnswer = createAttemptDto.answers[question.id] || '';
+      const givenAnswer = createAttemptDto.answers[question.id] || "";
 
-      const isCorrect = this.compareAnswers(givenAnswer, question.correctAnswer);
+      const isCorrect = this.compareAnswers(
+        givenAnswer,
+        question.correctAnswer,
+      );
       const diff = this.calculateDiff(givenAnswer, question.correctAnswer);
 
       if (isCorrect) score++;
@@ -71,11 +76,13 @@ export class AttemptService {
     // Загружаем полные данные с ответами
     const fullAttempt = await this.attemptRepository.findOne({
       where: { id: savedAttempt.id },
-      relations: ['answers', 'answers.question'],
+      relations: ["answers", "answers.question"],
     });
 
     if (!fullAttempt) {
-      throw new NotFoundException(`Failed to load attempt with id ${savedAttempt.id}`);
+      throw new NotFoundException(
+        `Failed to load attempt with id ${savedAttempt.id}`,
+      );
     }
 
     return this.mapToAttemptWithResultsDto(fullAttempt, questions);
@@ -84,7 +91,7 @@ export class AttemptService {
   async findOne(id: number): Promise<AttemptWithResultsDto> {
     const attempt = await this.attemptRepository.findOne({
       where: { id },
-      relations: ['answers', 'answers.question'],
+      relations: ["answers", "answers.question"],
     });
 
     if (!attempt) {
@@ -101,7 +108,7 @@ export class AttemptService {
   async findByQuizId(quizId: number): Promise<AttemptDto[]> {
     const attempts = await this.attemptRepository.find({
       where: { quizId },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
 
     return attempts.map((attempt) => this.mapToAttemptDto(attempt));
@@ -118,8 +125,8 @@ export class AttemptService {
    * Вычисление посимвольного различия
    */
   private calculateDiff(given: string, correct: string): DiffCharDto[] {
-    const givenChars = given.split('');
-    const correctChars = correct.split('');
+    const givenChars = given.split("");
+    const correctChars = correct.split("");
     const diff: DiffCharDto[] = [];
 
     // Итерируемся именно по тому, что ВВЕЛ ученик
@@ -128,18 +135,18 @@ export class AttemptService {
       const expected = correctChars[i];
 
       if (char.toLowerCase() === expected?.toLowerCase()) {
-        diff.push({ char, type: 'correct', index: i });
+        diff.push({ char, type: "correct", index: i });
       } else if (expected === undefined) {
         // Ученик ввел больше букв, чем в слове
-        diff.push({ char, type: 'extra', index: i });
+        diff.push({ char, type: "extra", index: i });
       } else {
         // Буква на этом месте просто неверная
-        diff.push({ char, type: 'incorrect', index: i });
+        diff.push({ char, type: "incorrect", index: i });
       }
     }
 
     // Опционально: если хочешь передавать информацию о пропущенных буквах
-    // для другого компонента, можно добавить их в конец, но для "Ваш ответ" 
+    // для другого компонента, можно добавить их в конец, но для "Ваш ответ"
     // мы их просто проигнорируем на фронте.
 
     return diff;
@@ -166,11 +173,11 @@ export class AttemptService {
       return {
         questionId: answer.questionId,
         given: answer.givenAnswer,
-        // ОШИБКА БЫЛА ЗДЕСЬ: 
+        // ОШИБКА БЫЛА ЗДЕСЬ:
         // 1. Заменяем ключ "correct" на "correctAnswer"
-        correctAnswer: question?.correctAnswer || '',
+        correctAnswer: question?.correctAnswer || "",
         // 2. Добавляем недостающее поле "imageUrl"
-        imageUrl: question?.imageUrl || '',
+        imageUrl: question?.imageUrl || "",
         isCorrect: answer.isCorrect,
         diff: answer.diff || [],
       };
