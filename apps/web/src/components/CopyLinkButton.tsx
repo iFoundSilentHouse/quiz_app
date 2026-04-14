@@ -8,7 +8,7 @@ export default function CopyLinkButton({ quizId }: { quizId: number }) {
 
   const handleCopy = async () => {
     // Формируем полную ссылку на прохождение
-    const shareUrl = `${window.location.origin}/quiz/${quizId}`;
+    const shareUrl = `${window.location.origin}/attempt-quiz/${quizId}`;
     
     try {
       await navigator.clipboard.writeText(shareUrl);
