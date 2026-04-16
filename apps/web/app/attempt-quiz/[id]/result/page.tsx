@@ -30,7 +30,13 @@ export default function ResultPage() {
         {result.results.map((ans, idx) => (
           <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex gap-6 items-center">
             <span className="text-xl font-bold text-gray-900">Question {idx + 1}:</span>
-            <img src={ans.imageUrl} className="w-32 h-32 object-cover rounded-lg flex-shrink-0" alt="" />
+            {ans.imageUrl && (
+              <img
+                src={ans.imageUrl}
+                className="w-32 h-32 object-contain bg-gray-50 rounded-lg flex-shrink-0"
+                alt={`Question ${idx + 1}`}
+              />
+            )}
             <div className="flex-grow space-y-3">
               <div>
                 <span className="text-xs font-bold text-gray-400 uppercase">Your answer:</span>

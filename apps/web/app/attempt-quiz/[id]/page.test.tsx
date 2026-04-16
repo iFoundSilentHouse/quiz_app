@@ -60,7 +60,7 @@ describe('QuizPassagePage', () => {
     
     fireEvent.click(submitButton);
     
-    expect(alertMock).toHaveBeenCalledWith('Enter your name:');
+    expect(alertMock).toHaveBeenCalledWith('Enter your name');
   });
 
   it('должен отправлять ответы и перенаправлять на страницу результата', async () => {

@@ -16,14 +16,14 @@ export default function QuizPassagePage() {
   }, [id]);
 
   const handleSubmit = async () => {
-    if (!studentName.trim()) return alert('Enter your name:');
+    if (!studentName.trim()) return alert('Enter your name');
 
     try {
       const response = await api.post(`/quizzes/${id}/attempts`, {
         studentName,
         answers // ПРОСТО ПЕРЕДАЕМ ОБЪЕКТ!
       });
-      router.push(`/quiz/${id}/result?attemptId=${response.id}`);
+      router.push(`/attempt-quiz/${id}/result?attemptId=${response.id}`);
     } catch (e) {
       alert('Error when saving a result');
     }
@@ -48,7 +48,13 @@ export default function QuizPassagePage() {
         {quiz.questions.map((q, index) => (
           <div key={q.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4 ">
             <span className="text-2xl font-bold text-gray-900">Question {index + 1}:</span>
-            <img src={q.imageUrl} alt="Вопрос" className="mx-auto object-cover rounded-lg" />
+            {q.imageUrl && (
+              <img
+                src={q.imageUrl}
+                alt="Вопрос"
+                className="mx-auto object-cover rounded-lg"
+              />
+            )}
             <input
               type="text"
               placeholder="What is shown here?"
